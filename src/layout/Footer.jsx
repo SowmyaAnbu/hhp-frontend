@@ -1,5 +1,7 @@
+"use client";
+
 // src/layout/Footer.jsx
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { FaFacebookF, FaLinkedinIn, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -99,7 +101,7 @@ export default function Footer() {
 
             {/* Alumni badge image */}
             <img
-              src={AlumniBadge}
+              src={AlumniBadge.src}
               alt="Alumni Badge"
               className="hhpAlumniBadge"
             />
@@ -160,30 +162,25 @@ export default function Footer() {
           <h3 className="hhpFooterHeading hhpQuickLinksTitle">Quick Links</h3>
 
           <div className="hhpFooterLinks">
-            <Link className="hhpFooterLink" to="/contact">
+            <Link className="hhpFooterLink" href="/contact">
               Contact Us
             </Link>
-            <a
-              className="hhpFooterLink"
-              href="https://humanhealthproject.org/blog/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link className="hhpFooterLink" href="/blog">
               Blogs
-            </a>
-            <Link className="hhpFooterLink" to="/latest-news">
+            </Link>
+            <Link className="hhpFooterLink" href="/latest-news">
               Latest News
             </Link>
-            <Link className="hhpFooterLink" to="/terms">
+            <Link className="hhpFooterLink" href="/terms">
               Terms of Service
             </Link>
-            <Link className="hhpFooterLink" to="/privacy">
+            <Link className="hhpFooterLink" href="/privacy">
               Privacy Policy
             </Link>
-            <Link className="hhpFooterLink" to="/medical-disclaimer">
+            <Link className="hhpFooterLink" href="/medical-disclaimer">
               Medical Disclaimer
             </Link>
-            <Link className="hhpFooterLink" to="/how-to-help/intern">
+            <Link className="hhpFooterLink" href="/how-to-help/intern">
               Intern With Us
             </Link>
           </div>
