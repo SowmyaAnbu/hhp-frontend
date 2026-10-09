@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { api } from "@/services/api";
 import "./HealthcareAccessIntro.css";
 
 const TOP_WATCH_URL = "https://youtu.be/NI7lsbtpb7Q?si=6EVMtP33qeX4vQ9P";
@@ -20,17 +21,37 @@ export default function HealthcareAccessIntroduction() {
     email: "",
     country: "",
   });
+  const [signupState, setSignupState] = useState({ status: "idle", message: "" });
 
   function updateField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim() || !form.country.trim()) return;
 
-    alert("Thanks — you’re signed up to be notified about upcoming events.");
-    setForm({ firstName: "", lastName: "", email: "", country: "" });
+    setSignupState({ status: "loading", message: "" });
+
+    try {
+      await api.subscribeToNewsletter({
+        email: form.email.trim(),
+        country: form.country.trim(),
+      });
+      setForm({ firstName: "", lastName: "", email: "", country: "" });
+      setSignupState({
+        status: "success",
+        message: "Thanks — you’re signed up to be notified about upcoming events.",
+      });
+    } catch (error) {
+      const duplicate = error?.status === 422 && error?.errors?.email;
+      setSignupState({
+        status: "error",
+        message: duplicate
+          ? "This email is already signed up."
+          : error?.message || "Sign up failed. Please try again.",
+      });
+    }
   }
 
   return (
@@ -98,6 +119,7 @@ export default function HealthcareAccessIntroduction() {
                       value={form.firstName}
                       onChange={(e) => updateField("firstName", e.target.value)}
                       autoComplete="given-name"
+                      disabled={signupState.status === "loading"}
                       required
                     />
                   </div>
@@ -112,6 +134,7 @@ export default function HealthcareAccessIntroduction() {
                       value={form.lastName}
                       onChange={(e) => updateField("lastName", e.target.value)}
                       autoComplete="family-name"
+                      disabled={signupState.status === "loading"}
                       required
                     />
                   </div>
@@ -128,6 +151,7 @@ export default function HealthcareAccessIntroduction() {
                   onChange={(e) => updateField("email", e.target.value)}
                   autoComplete="email"
                   placeholder="you@example.com"
+                  disabled={signupState.status === "loading"}
                   required
                 />
 
@@ -141,12 +165,27 @@ export default function HealthcareAccessIntroduction() {
                   onChange={(e) => updateField("country", e.target.value)}
                   autoComplete="country-name"
                   placeholder="United States"
+                  disabled={signupState.status === "loading"}
                   required
                 />
 
-                <button className="haci-button haci-buttonFull" type="submit">
-                  Sign Up
+                <button
+                  className="haci-button haci-buttonFull"
+                  type="submit"
+                  disabled={signupState.status === "loading"}
+                >
+                  {signupState.status === "loading" ? "Signing up..." : "Sign Up"}
                 </button>
+
+                {signupState.message && (
+                  <p
+                    className={`haci-formMessage haci-formMessage--${signupState.status}`}
+                    role={signupState.status === "error" ? "alert" : "status"}
+                    aria-live="polite"
+                  >
+                    {signupState.message}
+                  </p>
+                )}
 
                 <p className="haci-note">
                   We’ll only use your details to send program and event updates.

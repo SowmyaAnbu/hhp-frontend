@@ -203,6 +203,19 @@
   color: rgba(0, 0, 0, 0.62);
 }
 
+.haci-formMessage {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.haci-formMessage--success {
+  color: #16733c;
+}
+
+.haci-formMessage--error {
+  color: #b42318;
+}
+
 /* Lists */
 .haci-listBox {
   border-radius: 14px;
